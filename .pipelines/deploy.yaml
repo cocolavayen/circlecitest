@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: The First Step
-          command: echo 'Hello World for main!'
+          command: echo 'Hello World for Main!'
 
   build_develop:
     docker:
@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run:
           name: The First Step
-          command: echo 'Hello World for develop!'
+          command: echo 'Hello World for Develop!'
 
 workflows:
   version: 2
