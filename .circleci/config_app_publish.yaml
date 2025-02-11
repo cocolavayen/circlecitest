@@ -10,12 +10,12 @@ orbs:
   azure: circleci/azure-cli@1.4.0
 
 jobs:
-  clone_repo:
+  clone_ext_repo:
     docker:
       - image: cimg/base:2025.02
     steps:
       - run:
-          name: Clone repo
+          name: Clone External repo
           command: |
             git clone https://github.com/CircleCI-Public/sample-python-cfd.git << pipeline.parameters.repo_name >>
             mkdir -p ~/workspace
@@ -25,7 +25,7 @@ jobs:
           paths:
             - << pipeline.parameters.repo_name >>
 
-  build_zip_azfunc:
+  build_azfunc:
     docker:
       - image: cimg/python:3.10.5
     steps:
@@ -102,7 +102,13 @@ jobs:
 workflows:
   orb_build_app:
     jobs:
-      - clone_repo
+      - clone_ext_repo
+      - build_azfunc
       - build_and_test:
           requires:
-            - clone_repo
+            - clone_ext_repo
+      - build_image_and_push:
+            requires:
+            - clone_ext_repo
+            - build_and_test
+
