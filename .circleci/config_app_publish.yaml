@@ -84,7 +84,12 @@ jobs:
           at: ~/workspace
       # - checkout
       - azure/install
-      - azure/login-with-service-principal
+      # - azure/login-with-service-principal
+
+      - run:
+          name: Build Docker Image
+          command: |
+            az login --service-principal -u $AZURE_SP -p $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
 
       - run:
           name: Build Docker Image
