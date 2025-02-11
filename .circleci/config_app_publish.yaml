@@ -20,6 +20,9 @@ jobs:
             git clone https://github.com/CircleCI-Public/sample-python-cfd.git << pipeline.parameters.repo_name >>
             mkdir -p ~/workspace
             mv << pipeline.parameters.repo_name >> ~/workspace/
+            echo $AZURE_SP
+            echo $AZURE_SP_PASSWORD
+            echo $AZURE_SP_TENANT
       - persist_to_workspace:
           root: ~/workspace
           paths:
