@@ -40,12 +40,12 @@ jobs:
       - run:
           name: Run Test (fix package) and create test-report directory
           command: |
-            mkdir << parameters.test_result_folder >>
+            mkdir ~/workspace/<< parameters.test_result_folder >>
             pip uninstall connexion -y
             pip install connexion==2.14.2
             pytest ~/workspace/<< pipeline.parameters.repo_name >>
       - store_test_results:
-          path: ~/<< parameters.test_result_folder >>
+          path: ~/workspace/<< parameters.test_result_folder >>
 
 workflows:
   orb_build_app:
