@@ -41,7 +41,7 @@ jobs:
       - run:
           command: |
             pip uninstall connexion -y
-            pip install connexion==2.14.2 -y
+            pip install connexion==2.14.2
             pytest --version
             pytest ~/workspace/<< pipeline.parameters.repo_name >>
           name: Test
