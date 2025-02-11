@@ -82,28 +82,24 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/workspace
-      - setup_remote_docker
-      # - checkout
       # - azure/install
-      # # - azure/login-with-service-principal
+      - setup_remote_docker
 
+      - run: sudo apt-get update
       # - run:
       #     name: Login Azure with service principal
       #     command: |
       #       az login --service-principal -u $AZURE_SP -p $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
-
       - run:
           name: Build Docker Image
           command: |
             cd ~/workspace/<< pipeline.parameters.repo_name >>
             docker build -t << parameters.image_name >> .
-
       - run:
           name: Tag Docker Image for ACR
           command: |
             TAG=0.1.$CIRCLE_BUILD_NUM
             docker tag << parameters.image_name >> << parameters.acr_registry_name >>/<< parameters.image_name >>:$TAG
-
       # - run:
       #     name: Push Docker Image to ACR
       #     command: |
