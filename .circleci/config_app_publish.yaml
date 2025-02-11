@@ -78,7 +78,7 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       - checkout
-      - azure-cli/login-with-user-or-service-principal
+      - azure-cli/login-with-service-principal
 
       - run:
           name: Build Docker Image
@@ -100,7 +100,7 @@ jobs:
             docker push << parameters.acr_registry_name >>/<< parameters.image_name >>:$TAG
 
 workflows:
-  orb_build_app:
+  build_push_image:
     jobs:
       - clone_ext_repo
       - build_azfunc
