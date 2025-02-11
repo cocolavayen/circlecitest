@@ -18,7 +18,6 @@ jobs:
           command: echo 'Hello World for Develop!'
 
 workflows:
-  version: 2
   build_and_test:
     jobs:
       - build_main:
