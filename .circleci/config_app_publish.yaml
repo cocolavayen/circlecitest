@@ -1,0 +1,108 @@
+version: 2.1
+
+parameters:
+  repo_name:
+    type: string
+    default: "app"
+
+orbs:
+  python: circleci/python@3.0.0
+  azure: circleci/azure-cli@1.4.0
+
+jobs:
+  clone_repo:
+    docker:
+      - image: cimg/base:2025.02
+    steps:
+      - run:
+          name: Clone repo
+          command: |
+            git clone https://github.com/CircleCI-Public/sample-python-cfd.git << pipeline.parameters.repo_name >>
+            mkdir -p ~/workspace
+            mv << pipeline.parameters.repo_name >> ~/workspace/
+      - persist_to_workspace:
+          root: ~/workspace
+          paths:
+            - << pipeline.parameters.repo_name >>
+
+  build_zip_azfunc:
+    docker:
+      - image: cimg/python:3.10.5
+    steps:
+      - checkout
+      - run:
+          name: Install packages
+          command: |
+            cd ~/az-app
+            pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
+
+      - store_artifacts:
+          path: ~/az-app
+          destination: drop.zip
+
+  build_and_test:
+    docker:
+      - image: cimg/python:3.10.5
+    parameters:
+      test_result_folder:
+        type: string
+        default: "test-report"
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - python/install-packages:
+          pkg-manager: pip
+          app-dir: ~/workspace/<< pipeline.parameters.repo_name >>/
+      - run:
+          name: Run Test (fix package) and create test-report directory
+          command: |
+            mkdir << parameters.test_result_folder >>
+            # Fix for Flask resolution module
+            pip uninstall connexion -y
+            pip install connexion==2.14.2
+            pytest ~/workspace/<< pipeline.parameters.repo_name >> --junitxml=<< parameters.test_result_folder >>/junit.xml
+      - store_test_results:
+          path: << parameters.test_result_folder >>
+
+  build_image_and_push:
+    docker:
+      - image: cimg/de:2025.02
+    parameters:
+      acr_registry_name:
+        type: string
+        default: "myrtusdevopsecr.azurecr.io"
+      image_name:
+        type: string
+        default: "myrtus-dev-azfunc"
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - checkout
+      - azure-cli/login-with-user-or-service-principal
+
+      - run:
+          name: Build Docker Image
+          command: |
+            cd ~/workspace/<< pipeline.parameters.repo_name >>
+            docker build -t << parameters.image_name >> .
+
+      - run:
+          name: Tag Docker Image for ACR
+          command: |
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker tag << parameters.image_name >> << parameters.acr_registry_name >>/<< parameters.image_name >>:$TAG
+
+      - run:
+          name: Push Docker Image to ACR
+          command: |
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            az acr login --name << parameters.acr_registry_name >>
+            docker push << parameters.acr_registry_name >>/<< parameters.image_name >>:$TAG
+
+workflows:
+  orb_build_app:
+    jobs:
+      - clone_repo
+      - build_and_test:
+          requires:
+            - clone_repo
