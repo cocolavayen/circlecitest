@@ -27,26 +27,26 @@ jobs:
   build_and_test:
     docker:
       - image: cimg/python:3.10.5
+    parameters:
+      test_result_folder:
+        type: string
+        default: "test-report"
     steps:
       - attach_workspace:
           at: ~/workspace
-      - run:
-          name: Check repo
-          command: |
-            cd ~/workspace/<< pipeline.parameters.repo_name >>
-            ls -la
       - python/install-packages:
           pkg-manager: pip
           app-dir: ~/workspace/<< pipeline.parameters.repo_name >>/
       - run:
+          name: Run Test (fix package) and create test-report directory
           command: |
-            pip uninstall connexion
+            mkdir ~/<< parameters.test_result_folder >>
+            # Fix for Flask resolution module
+            pip uninstall connexion -y
             pip install connexion==2.14.2
-            pytest --version
-            pytest ~/workspace/<< pipeline.parameters.repo_name >>
-          name: Test
+            pytest ~/workspace/<< pipeline.parameters.repo_name >> --junitxml=~/<< parameters.test_result_folder >>/results.xml
       - store_test_results:
-          path: ~/workspace/<< pipeline.parameters.repo_name >>/test-results
+          path: ~/<< parameters.test_result_folder >>
 
 workflows:
   orb_build_app:
