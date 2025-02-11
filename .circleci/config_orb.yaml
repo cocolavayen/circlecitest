@@ -38,10 +38,6 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
           app-dir: ~/workspace/<< pipeline.parameters.repo_name >>/
-      - python/install-packages:
-          args: pytest
-          pkg-manager: pip
-          pypi-cache: false
       - run:
           command: |
             pytest --version
