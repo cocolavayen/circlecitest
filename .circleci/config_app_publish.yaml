@@ -33,12 +33,11 @@ jobs:
       - run:
           name: Install packages
           command: |
-            cd az-app
-            ls -la
+            cd ~/project/az-app
             pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
 
       - store_artifacts:
-          path: az-app
+          path: ~/project/az-app
           destination: drop.zip
 
   build_and_test:
