@@ -7,7 +7,7 @@ parameters:
 
 orbs:
   python: circleci/python@3.0.0
-  azure: circleci/azure-cli@1.4.0
+  azure: circleci/azure-cli@1.3.0
 
 jobs:
   clone_ext_repo:
