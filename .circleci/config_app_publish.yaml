@@ -20,9 +20,6 @@ jobs:
             git clone https://github.com/CircleCI-Public/sample-python-cfd.git << pipeline.parameters.repo_name >>
             mkdir -p ~/workspace
             mv << pipeline.parameters.repo_name >> ~/workspace/
-            echo $AZURE_SP
-            echo $AZURE_SP_PASSWORD
-            echo $AZURE_SP_TENANT
       - persist_to_workspace:
           root: ~/workspace
           paths:
@@ -71,7 +68,7 @@ jobs:
     docker:
       - image: cimg/base:2025.02
 
-    # executor: azure/azure-docker
+    executor: azure/azure-docker
     parameters:
       acr_registry_name:
         type: string
@@ -112,12 +109,12 @@ workflows:
   build_app_and_push_image:
     jobs:
       - clone_ext_repo
-      # - build_azfunc
-      # - build_and_test:
-      #     requires:
-      #       - clone_ext_repo
+      - build_azfunc
+      - build_and_test:
+          requires:
+            - clone_ext_repo
       - build_image_and_push:
             requires:
             - clone_ext_repo
-            # - build_and_test
+            - build_and_test
 
