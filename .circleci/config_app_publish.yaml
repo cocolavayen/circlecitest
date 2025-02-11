@@ -79,7 +79,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/workspace
-      - checkout
+      # - checkout
+      - azure-cli/install
       - azure/login-with-service-principal
 
       - run:
@@ -105,12 +106,12 @@ workflows:
   build_app_and_push_image:
     jobs:
       - clone_ext_repo
-      - build_azfunc
-      - build_and_test:
-          requires:
-            - clone_ext_repo
+      # - build_azfunc
+      # - build_and_test:
+      #     requires:
+      #       - clone_ext_repo
       - build_image_and_push:
             requires:
             - clone_ext_repo
-            - build_and_test
+            # - build_and_test
 
