@@ -68,7 +68,7 @@ jobs:
     docker:
       - image: cimg/de:2025.02
 
-    executor: azure-cli/default
+    executor: azure/azure-docker
     parameters:
       acr_registry_name:
         type: string
@@ -102,7 +102,7 @@ jobs:
             docker push << parameters.acr_registry_name >>/<< parameters.image_name >>:$TAG
 
 workflows:
-  build_push_image:
+  build_app_and_push_image:
     jobs:
       - clone_ext_repo
       - build_azfunc
