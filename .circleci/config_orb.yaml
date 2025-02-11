@@ -42,11 +42,13 @@ jobs:
           command: |
             pip uninstall connexion -y
             pip install connexion==2.14.2
-            pytest --version
             pytest ~/workspace/<< pipeline.parameters.repo_name >>
           name: Test
+      - run:
+          command: mkdir test-report
+          name: Create test-report directory
       - store_test_results:
-          path: ~/workspace/<< pipeline.parameters.repo_name >>/test-results
+          path: ~/test-results
 
 workflows:
   orb_build_app:
