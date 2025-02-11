@@ -71,7 +71,7 @@ jobs:
     docker:
       - image: cimg/base:2025.02
 
-    executor: azure/azure-docker
+    # executor: azure/azure-docker
     parameters:
       acr_registry_name:
         type: string
@@ -83,13 +83,13 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       # - checkout
-      - azure/install
-      # - azure/login-with-service-principal
+      # - azure/install
+      # # - azure/login-with-service-principal
 
-      - run:
-          name: Build Docker Image
-          command: |
-            az login --service-principal -u $AZURE_SP -p $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
+      # - run:
+      #     name: Login Azure with service principal
+      #     command: |
+      #       az login --service-principal -u $AZURE_SP -p $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
 
       - run:
           name: Build Docker Image
@@ -103,12 +103,12 @@ jobs:
             TAG=0.1.$CIRCLE_BUILD_NUM
             docker tag << parameters.image_name >> << parameters.acr_registry_name >>/<< parameters.image_name >>:$TAG
 
-      - run:
-          name: Push Docker Image to ACR
-          command: |
-            TAG=0.1.$CIRCLE_BUILD_NUM
-            az acr login --name << parameters.acr_registry_name >>
-            docker push << parameters.acr_registry_name >>/<< parameters.image_name >>:$TAG
+      # - run:
+      #     name: Push Docker Image to ACR
+      #     command: |
+      #       TAG=0.1.$CIRCLE_BUILD_NUM
+      #       az acr login --name << parameters.acr_registry_name >>
+      #       docker push << parameters.acr_registry_name >>/<< parameters.image_name >>:$TAG
 
 workflows:
   build_app_and_push_image:
