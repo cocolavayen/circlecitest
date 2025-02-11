@@ -24,7 +24,7 @@ jobs:
 
 # Orchestrate our job run sequence
 workflows:
-  build_and_approval_test:
+  build_and_approval:
     jobs:
       - build
       - test:
