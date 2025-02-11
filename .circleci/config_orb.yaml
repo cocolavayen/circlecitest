@@ -56,7 +56,7 @@ jobs:
           destination: coverage
 
 workflows:
-  build_and_test:
+  build_and_orb:
     jobs:
       - build
       - test:
