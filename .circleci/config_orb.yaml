@@ -41,6 +41,7 @@ jobs:
           name: Run Test (fix package) and create test-report directory
           command: |
             mkdir ~/<< parameters.test_result_folder >>
+            # Fix for Flask resolution module
             pip uninstall connexion -y
             pip install connexion==2.14.2
             pytest ~/workspace/<< pipeline.parameters.repo_name >> --junitxml=~/<< parameters.test_result_folder >>/results.xml
