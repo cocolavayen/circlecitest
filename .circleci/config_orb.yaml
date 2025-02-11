@@ -27,28 +27,25 @@ jobs:
   build_and_test:
     docker:
       - image: cimg/python:3.10.5
+    parameters:
+      test_result_folder:
+        type: string
+        default: "test-report"
     steps:
       - attach_workspace:
           at: ~/workspace
-      - run:
-          name: Check repo
-          command: |
-            cd ~/workspace/<< pipeline.parameters.repo_name >>
-            ls -la
       - python/install-packages:
           pkg-manager: pip
           app-dir: ~/workspace/<< pipeline.parameters.repo_name >>/
       - run:
+          name: Run Test (fix package) and create test-report directory
           command: |
+            mkdir << parameters.test_result_folder >>
             pip uninstall connexion -y
             pip install connexion==2.14.2
             pytest ~/workspace/<< pipeline.parameters.repo_name >>
-          name: Test
-      - run:
-          command: mkdir test-report
-          name: Create test-report directory
       - store_test_results:
-          path: ~/test-results
+          path: ~/<< parameters.test_result_folder >>
 
 workflows:
   orb_build_app:
