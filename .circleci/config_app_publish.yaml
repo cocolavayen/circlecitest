@@ -67,6 +67,8 @@ jobs:
   build_image_and_push:
     docker:
       - image: cimg/de:2025.02
+
+    executor: azure-cli/default
     parameters:
       acr_registry_name:
         type: string
